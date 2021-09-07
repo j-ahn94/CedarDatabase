@@ -41,10 +41,13 @@ public class CedarDatabase {
 
 	public CedarDatabase() {
 		initialize();
+		
+		/* Initialize connection and write at the bottom */
 		Connect();
 		table_load();
 	}
 
+	/* SQL class names 'Connection, PreparedStatement, ResultSet' */
 	Connection connect;
 	PreparedStatement prepare;
 	ResultSet data;
@@ -54,7 +57,11 @@ public class CedarDatabase {
 	public void Connect() {
 		String uname="root";
 		try {
+			/* Register for the driver */
 			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			/* Telling the path where the database url is at. Connection with the cedar database */
+			/* Fix the credential */
 			connect = DriverManager.getConnection("jdbc:mysql://localhost/cedardatabase", uname, "Dkswlstjr!234");
 		}
 		catch (ClassNotFoundException ex) {
@@ -65,13 +72,19 @@ public class CedarDatabase {
 		}
 	}
 	
+	/*Don't see any difference between public and no-public */
 	void table_load()
 	{
 		try
 		{
+			
+			
 			prepare = connect.prepareStatement("select * from customer");
+			
+			/* Stack overflow reference */
 			data = prepare.executeQuery();
 			table.setModel(DbUtils.resultSetToTableModel(data));
+			/* initial error with DbUtil, need to download rs2xml.jar from hacksmile.com */
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
@@ -166,16 +179,20 @@ public class CedarDatabase {
 		JButton btnNewButton = new JButton("SAVE");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				/*GOAL: store data into cedar database when clicking on "SAVE" */
 				String fullName, phoneNumber, price;
 				
+				/* Remember the text box variables to make a connections! */
 				
 				fullName = txtFullName.getText();
+				/* getText method to retrieve the texts inside the text boxes */
 				phoneNumber = txtPhoneNumber.getText();
 				price = txtPrice.getText();
 				
+				/* Stackoverflow reference */
 				try {
 					prepare = connect.prepareStatement("insert into customer(name,phoneNum,price)values(?,?,?)");
+					/* Each question mark connects to fullName, phoneNumber, price */
 					prepare.setString(1, fullName);
 					prepare.setString(2, phoneNumber);
 					prepare.setString(3, price);
@@ -185,7 +202,8 @@ public class CedarDatabase {
 					txtFullName.setText("");
 					txtPhoneNumber.setText("");
 					txtPrice.setText("");
-					txtFullName.requestFocus();
+					txtFullName.requestFocus(); /* Focus on the txtFullName method for display purpose. Still not sure what it does as it only states
+					in stack overflow to write it */
 				}
 				catch(SQLException error) {
 					error.printStackTrace();
